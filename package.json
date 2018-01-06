@@ -1,0 +1,10 @@
+{
+  "name": "importr",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "ava -v"
+  },
+  "dependencies": {
+    "ava": "^0.24.0"
+  }
+}
