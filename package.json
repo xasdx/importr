@@ -6,5 +6,11 @@
   },
   "dependencies": {
     "ava": "^0.24.0"
+  },
+  "ava": {
+    "files": [
+      "test/*.js",
+      "!test/resources/**/*"
+    ]
   }
 }
