@@ -36,39 +36,43 @@ let validateAlias = (alias) => {
   assert.notEqual(alias, "", err("empty string is not a valid alias"))
 }
 
-let sourceFiles = scanSyncRecursive(__dirname)
+module.exports = (rootDirPath) => {
   
+  let sourcePath = rootDirPath ? path.join(__dirname, rootDirPath) : __dirname
+  let sourceFiles = scanSyncRecursive(sourcePath)
 
-let getOne = (importName) => {
-  assert.ok(util.isString(importName), err(`'${importName}' is not a valid module name`))
-  if (isNodeModule(importName)) { return require(getNodeModuleName(importName)) }
-  if (isExternalModule(importName)) { return require(getExternalModuleName(importName)) }
-  let file = loadFile(importName)
-  return require(file.path)
-}
+  let get = (importList, aliasList) => {
+    if (Array.isArray(importList)) { return getAll(importList, aliasList) }
+                              else { return getOne(importList) }
+  }
 
-let getAll = (importList, aliasList) => {
-  assert.notEmptyArray(importList, err("the module list should contain at least one module name"))
-  return importList.reduce((importObject, name, index) => {
-    if (aliasList) {
-      assert.equal(importList.length, aliasList.length, err("module list and alias list should be the same length"))
-      let alias = aliasList[index]
-      validateAlias(alias)
-      importObject[alias] = getOne(name)
-    } else { importObject[name] = getOne(name) }
-    return importObject
-  }, {})
-}
+  let getOne = (importName) => {
+    assert.ok(util.isString(importName), err(`'${importName}' is not a valid module name`))
+    if (isNodeModule(importName)) { return require(getNodeModuleName(importName)) }
+    if (isExternalModule(importName)) { return require(getExternalModuleName(importName)) }
+    let file = loadFile(importName)
+    return require(file.path)
+  }
 
-let loadFile = (name) => {
-  let matchingFiles = sourceFiles.filter(file => file.fileName.includes(name))
-  assert.notEmptyArray(matchingFiles, err(`no file exists with the given name '${name}'`))
-  assert.ok(matchingFiles.length < 2, err(`found multiple matches for the given name '${name}'`))
-  return matchingFiles[0]
-}
+  let getAll = (importList, aliasList) => {
+    assert.notEmptyArray(importList, err("the module list should contain at least one module name"))
+    return importList.reduce((importObject, name, index) => {
+      if (aliasList) {
+        assert.equal(importList.length, aliasList.length, err("module list and alias list should be the same length"))
+        let alias = aliasList[index]
+        validateAlias(alias)
+        importObject[alias] = getOne(name)
+      } else { importObject[name] = getOne(name) }
+      return importObject
+    }, {})
+  }
 
+  let loadFile = (name) => {
+    let matchingFiles = sourceFiles.filter(file => file.fileName.includes(name))
+    assert.notEmptyArray(matchingFiles, err(`no file exists with the given name '${name}'`))
+    assert.ok(matchingFiles.length < 2, err(`found multiple matches for the given name '${name}'`))
+    return matchingFiles[0]
+  }
 
-module.exports = (importList, aliasList) => {
-  if (Array.isArray(importList)) { return getAll(importList, aliasList) }
-                            else { return getOne(importList) }
+  return get
 }

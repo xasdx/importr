@@ -1,6 +1,6 @@
 let test = require("ava")
 
-let importr = require("..")
+let importr = require("..")()
 
 test("imports user-defined modules", t => {
   let m = importr("module-b")
