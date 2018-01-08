@@ -1,5 +1,7 @@
 # importr
 
+[![Build Status](https://travis-ci.org/xasdx/importr.svg?branch=master)](https://travis-ci.org/xasdx/importr)
+
 > Microlibrary that simplifies the process of importing NodeJS modules
 
 ## Usage
