@@ -31,6 +31,13 @@ let util = importr("node_util")
 util.isNull(null)
 ```
 
+Importing external modules (dependencies defined in package.json) is similar:
+
+```js
+let test = importr("ext_ava")
+test("behaves like it should", t => {})
+```
+
 You can also import multiple modules if you pass an array of module names:
 
 ```js
@@ -45,7 +52,7 @@ m.mailService.doSomethingElse()
 Don't like the module names? Create aliases for them by passing a second array of strings:
 
 ```js
-let _ = importr(["node_util", "module_a"], ["util", "a"])
-_.util.isNull(null)
-_.a.hi()
+let m = importr(["node_util", "module_a"], ["util", "a"])
+m.util.isNull(null)
+m.a.hi()
 ```
